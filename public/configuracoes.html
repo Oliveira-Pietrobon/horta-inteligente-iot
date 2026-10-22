@@ -1,0 +1,682 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configurações | Plataforma IoT</title>
+
+  <style>
+    :root {
+      --fundo: #f4f7fb;
+      --branco: #ffffff;
+      --azul: #173b70;
+      --azul-claro: #eaf1fc;
+      --texto: #26364a;
+      --cinza: #718096;
+      --borda: #e4eaf2;
+      --verde: #16865b;
+      --laranja: #b7791f;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--fundo);
+      color: var(--texto);
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 245px;
+      flex-shrink: 0;
+      background: #142b4b;
+      color: white;
+      padding: 27px 17px;
+    }
+
+    .logo {
+      font-size: 19px;
+      font-weight: 700;
+      margin: 0 10px 7px;
+    }
+
+    .sublogo {
+      color: #b9c8dc;
+      font-size: 12px;
+      margin: 0 10px 30px;
+    }
+
+    .menu-titulo {
+      color: #8fa7c6;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 24px 10px 10px;
+    }
+
+    .menu a {
+      display: block;
+      color: #d8e3f2;
+      text-decoration: none;
+      padding: 12px 13px;
+      margin: 5px 0;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .menu a:hover,
+    .menu a.ativo {
+      background: #274b78;
+      color: white;
+    }
+
+    .conteudo {
+      flex: 1;
+      min-width: 0;
+      padding: 30px;
+    }
+
+    .topo {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 27px;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      font-size: 27px;
+      margin: 0 0 8px;
+      color: #172f50;
+    }
+
+    .descricao {
+      color: var(--cinza);
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: white;
+      border: 1px solid var(--borda);
+      border-radius: 20px;
+      padding: 9px 13px;
+      font-size: 12px;
+      color: var(--cinza);
+    }
+
+    .ponto {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--verde);
+    }
+
+    .secao {
+      background: white;
+      border: 1px solid var(--borda);
+      border-radius: 13px;
+      padding: 23px;
+      margin-bottom: 20px;
+    }
+
+    .secao-cabecalho {
+      display: flex;
+      align-items: flex-start;
+      gap: 13px;
+      margin-bottom: 20px;
+    }
+
+    .icone {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: var(--azul-claro);
+      font-size: 21px;
+      flex-shrink: 0;
+    }
+
+    h2 {
+      font-size: 17px;
+      margin: 1px 0 6px;
+      color: #203653;
+    }
+
+    .secao-cabecalho p {
+      color: var(--cinza);
+      font-size: 13px;
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .campo {
+      margin-bottom: 18px;
+    }
+
+    .campo:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      max-width: 520px;
+      border: 1px solid #d8e1ec;
+      background: white;
+      color: var(--texto);
+      border-radius: 8px;
+      padding: 11px 12px;
+      font: inherit;
+      font-size: 14px;
+    }
+
+    input:focus,
+    select:focus {
+      outline: 2px solid #c4d8fb;
+      border-color: #5888cf;
+    }
+
+    .ajuda {
+      color: var(--cinza);
+      font-size: 12px;
+      margin-top: 7px;
+      line-height: 1.5;
+    }
+
+    .linha {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 15px 0;
+      border-bottom: 1px solid #edf1f6;
+    }
+
+    .linha:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .linha strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .linha p {
+      color: var(--cinza);
+      font-size: 12px;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .alternancia {
+      position: relative;
+      width: 45px;
+      height: 25px;
+      flex-shrink: 0;
+    }
+
+    .alternancia input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .trilho {
+      position: absolute;
+      inset: 0;
+      background: #cbd5e1;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .trilho::before {
+      content: "";
+      position: absolute;
+      height: 19px;
+      width: 19px;
+      left: 3px;
+      top: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: .2s;
+    }
+
+    .alternancia input:checked + .trilho {
+      background: var(--verde);
+    }
+
+    .alternancia input:checked + .trilho::before {
+      transform: translateX(20px);
+    }
+
+    .aviso {
+      background: #fff8e8;
+      border: 1px solid #f3dfaa;
+      color: #795a17;
+      border-radius: 9px;
+      padding: 14px 16px;
+      font-size: 13px;
+      line-height: 1.6;
+      margin-top: 14px;
+    }
+
+    .botoes {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 24px 0;
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 11px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .secundario {
+      color: #334155;
+      background: #e8edf4;
+    }
+
+    .principal {
+      color: white;
+      background: var(--azul);
+    }
+
+    button:hover {
+      filter: brightness(.96);
+    }
+
+    .mensagem {
+      display: none;
+      margin-bottom: 18px;
+      padding: 13px 15px;
+      border-radius: 8px;
+      background: #e8f7ef;
+      color: #176744;
+      font-size: 13px;
+    }
+
+    .rodape {
+      color: #8996a7;
+      text-align: center;
+      font-size: 12px;
+      padding: 10px;
+    }
+
+    @media (max-width: 760px) {
+      .layout {
+        display: block;
+      }
+
+      .sidebar {
+        width: 100%;
+        padding: 20px 14px;
+      }
+
+      .menu {
+        display: flex;
+        overflow-x: auto;
+        gap: 5px;
+      }
+
+      .menu a {
+        white-space: nowrap;
+      }
+
+      .menu-titulo {
+        display: none;
+      }
+
+      .conteudo {
+        padding: 19px 14px;
+      }
+
+      .secao {
+        padding: 18px;
+      }
+
+      .linha {
+        gap: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="logo">◈ Plataforma IoT</div>
+    <div class="sublogo">Monitoramento inteligente</div>
+
+    <nav class="menu">
+      <div class="menu-titulo">Principal</div>
+      <a href="/index.html">▦ Dashboard</a>
+      <a href="/leituras.html">⌁ Leituras</a>
+      <a href="/dispositivos.html">▣ Dispositivos</a>
+
+      <div class="menu-titulo">Monitoramento</div>
+      <a href="/alertas.html">⚑ Alertas</a>
+      <a href="/relatorios.html">▤ Relatórios</a>
+
+      <div class="menu-titulo">Sistema</div>
+      <a href="/configuracoes.html" class="ativo">⚙ Configurações</a>
+    </nav>
+  </aside>
+
+  <main class="conteudo">
+    <header class="topo">
+      <div>
+        <h1>Configurações</h1>
+        <p class="descricao">
+          Consulte e ajuste as preferências locais da plataforma.
+        </p>
+      </div>
+
+      <div class="status">
+        <span class="ponto"></span>
+        Ambiente de desenvolvimento
+      </div>
+    </header>
+
+    <div id="mensagem" class="mensagem" role="status" aria-live="polite"></div>
+
+    <form id="formConfiguracoes">
+
+      <section class="secao">
+        <div class="secao-cabecalho">
+          <div class="icone">🌐</div>
+          <div>
+            <h2>Conexão e monitoramento</h2>
+            <p>Preferências utilizadas na visualização do sistema.</p>
+          </div>
+        </div>
+
+        <div class="campo">
+          <label for="intervalo">Intervalo de atualização automática</label>
+          <select id="intervalo">
+            <option value="5">A cada 5 segundos</option>
+            <option value="10">A cada 10 segundos</option>
+            <option value="30">A cada 30 segundos</option>
+            <option value="60">A cada 1 minuto</option>
+          </select>
+          <div class="ajuda">
+            Define a preferência de atualização desta página de configurações.
+            Não altera automaticamente as outras páginas.
+          </div>
+        </div>
+
+        <div class="campo">
+          <label for="dispositivo">Dispositivo preferencial</label>
+          <select id="dispositivo">
+            <option value="">Todos os dispositivos</option>
+          </select>
+          <div class="ajuda">
+            A lista é preenchida com os dispositivos encontrados nas leituras
+            disponíveis na API.
+          </div>
+        </div>
+      </section>
+
+      <section class="secao">
+        <div class="secao-cabecalho">
+          <div class="icone">🔔</div>
+          <div>
+            <h2>Preferências de alertas</h2>
+            <p>Ative ou desative avisos visuais nesta página.</p>
+          </div>
+        </div>
+
+        <div class="linha">
+          <div>
+            <strong>Exibir avisos de temperatura</strong>
+            <p>Permite indicar se deseja visualizar essa categoria de aviso.</p>
+          </div>
+          <label class="alternancia" aria-label="Exibir avisos de temperatura">
+            <input type="checkbox" id="alertaTemperatura" checked>
+            <span class="trilho"></span>
+          </label>
+        </div>
+
+        <div class="linha">
+          <div>
+            <strong>Exibir avisos de umidade</strong>
+            <p>Permite indicar se deseja visualizar essa categoria de aviso.</p>
+          </div>
+          <label class="alternancia" aria-label="Exibir avisos de umidade">
+            <input type="checkbox" id="alertaUmidade" checked>
+            <span class="trilho"></span>
+          </label>
+        </div>
+
+        <div class="aviso">
+          <strong>Importante:</strong> estas opções são preferências da interface.
+          Elas ainda não controlam notificações do servidor, e-mail ou mensagens
+          enviadas aos usuários.
+        </div>
+      </section>
+
+      <section class="secao">
+        <div class="secao-cabecalho">
+          <div class="icone">🛡️</div>
+          <div>
+            <h2>Informações do ambiente</h2>
+            <p>Dados técnicos da instalação atual.</p>
+          </div>
+        </div>
+
+        <div class="linha">
+          <div>
+            <strong>Backend</strong>
+            <p>API Node.js e Express</p>
+          </div>
+          <span id="statusApi">Verificando...</span>
+        </div>
+
+        <div class="linha">
+          <div>
+            <strong>Banco de dados</strong>
+            <p>PostgreSQL</p>
+          </div>
+          <span>Configurado</span>
+        </div>
+
+        <div class="linha">
+          <div>
+            <strong>Mensageria</strong>
+            <p>Broker MQTT Mosquitto</p>
+          </div>
+          <span>Configurado</span>
+        </div>
+
+        <div class="aviso">
+          Esta tela apresenta informações da configuração prevista no projeto.
+          A indicação “Configurado” não representa um teste de conexão em tempo
+          real para cada serviço.
+        </div>
+      </section>
+
+      <div class="botoes">
+        <button type="button" class="secundario" id="restaurar">
+          Restaurar padrão
+        </button>
+        <button type="submit" class="principal">
+          Salvar preferências
+        </button>
+      </div>
+    </form>
+
+    <div class="rodape">
+      Plataforma IoT Integrada · Projeto acadêmico · Ambiente de desenvolvimento
+    </div>
+  </main>
+</div>
+
+<script>
+  const CHAVE = "plataforma-iot-configuracoes";
+
+  const campos = {
+    intervalo: document.getElementById("intervalo"),
+    dispositivo: document.getElementById("dispositivo"),
+    alertaTemperatura: document.getElementById("alertaTemperatura"),
+    alertaUmidade: document.getElementById("alertaUmidade")
+  };
+
+  const mensagem = document.getElementById("mensagem");
+
+  const padrao = {
+    intervalo: "5",
+    dispositivo: "",
+    alertaTemperatura: true,
+    alertaUmidade: true
+  };
+
+  function mostrarMensagem(texto) {
+    mensagem.textContent = texto;
+    mensagem.style.display = "block";
+  }
+
+  function obterConfiguracoes() {
+    try {
+      const salvas = localStorage.getItem(CHAVE);
+      return salvas ? { ...padrao, ...JSON.parse(salvas) } : { ...padrao };
+    } catch (erro) {
+      return { ...padrao };
+    }
+  }
+
+  function preencherCampos(config) {
+    campos.intervalo.value = config.intervalo;
+    campos.dispositivo.value = config.dispositivo;
+    campos.alertaTemperatura.checked = config.alertaTemperatura;
+    campos.alertaUmidade.checked = config.alertaUmidade;
+  }
+
+  function salvarConfiguracoes(config) {
+    localStorage.setItem(CHAVE, JSON.stringify(config));
+  }
+
+  function carregarDispositivos(leituras) {
+    const dispositivoSalvo = campos.dispositivo.value;
+    const ids = [...new Set(
+      leituras
+        .map(leitura => leitura.deviceId || leitura.device_id)
+        .filter(Boolean)
+    )].sort();
+
+    campos.dispositivo.innerHTML =
+      '<option value="">Todos os dispositivos</option>';
+
+    ids.forEach(id => {
+      const opcao = document.createElement("option");
+      opcao.value = id;
+      opcao.textContent = id;
+      campos.dispositivo.appendChild(opcao);
+    });
+
+    if (ids.includes(dispositivoSalvo)) {
+      campos.dispositivo.value = dispositivoSalvo;
+    }
+  }
+
+  async function verificarApi() {
+    const status = document.getElementById("statusApi");
+
+    try {
+      const resposta = await fetch("/api/leituras/ultima");
+      status.textContent = resposta.ok || resposta.status === 404
+        ? "API respondendo"
+        : "Verificar API";
+    } catch (erro) {
+      status.textContent = "API indisponível";
+    }
+  }
+
+  async function iniciar() {
+    preencherCampos(obterConfiguracoes());
+    verificarApi();
+
+    try {
+      const resposta = await fetch("/api/leituras");
+      if (!resposta.ok) throw new Error("Falha ao carregar leituras");
+
+      const leituras = await resposta.json();
+      carregarDispositivos(leituras);
+
+      const config = obterConfiguracoes();
+      if (config.dispositivo) {
+        campos.dispositivo.value = config.dispositivo;
+      }
+    } catch (erro) {
+      console.error("Não foi possível carregar dispositivos:", erro);
+    }
+  }
+
+  document.getElementById("formConfiguracoes")
+    .addEventListener("submit", function(evento) {
+      evento.preventDefault();
+
+      const config = {
+        intervalo: campos.intervalo.value,
+        dispositivo: campos.dispositivo.value,
+        alertaTemperatura: campos.alertaTemperatura.checked,
+        alertaUmidade: campos.alertaUmidade.checked
+      };
+
+      try {
+        salvarConfiguracoes(config);
+        mostrarMensagem(
+          "Preferências salvas neste navegador. Elas ainda não alteram as configurações do servidor."
+        );
+      } catch (erro) {
+        mostrarMensagem(
+          "Não foi possível salvar. Verifique as permissões de armazenamento do navegador."
+        );
+      }
+    });
+
+  document.getElementById("restaurar").addEventListener("click", function() {
+    preencherCampos(padrao);
+
+    try {
+      salvarConfiguracoes(padrao);
+      mostrarMensagem("Preferências locais restauradas para o padrão.");
+    } catch (erro) {
+      mostrarMensagem("Não foi possível restaurar as preferências.");
+    }
+  });
+
+  iniciar();
+</script>
+</body>
+</html>

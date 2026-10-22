@@ -1,0 +1,626 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dispositivos | Plataforma IoT Integrada</title>
+
+  <style>
+    :root {
+      --navy: #102744;
+      --teal: #079f91;
+      --blue: #2878f5;
+      --bg: #f3f7fc;
+      --text: #132b4c;
+      --muted: #637895;
+      --border: #e5edf6;
+      --white: #fff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .app { min-height: 100vh; display: flex; }
+
+    .sidebar {
+      width: 235px;
+      flex-shrink: 0;
+      background: linear-gradient(180deg, #102744, #142f4c);
+      color: white;
+      padding: 24px 12px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 10px 32px;
+      font-size: 16px;
+      font-weight: 750;
+      line-height: 1.4;
+    }
+
+    .brand-icon {
+      width: 43px;
+      height: 43px;
+      display: grid;
+      place-items: center;
+      background: #087f78;
+      border-radius: 12px;
+      font-size: 24px;
+    }
+
+    .nav-label {
+      padding: 0 13px;
+      margin-bottom: 12px;
+      color: #91a9c3;
+      font-size: 11px;
+      letter-spacing: 1px;
+    }
+
+    nav { display: grid; gap: 7px; }
+
+    nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px;
+      border-radius: 10px;
+      color: #d5e2f1;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    nav a:hover, nav a.active {
+      color: white;
+      background: #164d68;
+    }
+
+    .nav-icon { width: 22px; text-align: center; font-size: 18px; }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      padding: 15px;
+      background: #1b3a58;
+      border: 1px solid #294863;
+      border-radius: 12px;
+      font-size: 13px;
+    }
+
+    .sidebar-bottom p {
+      margin-bottom: 0;
+      color: #c0d1e4;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .main { flex: 1; min-width: 0; padding: 28px; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 24px;
+    }
+
+    h1 { margin: 0 0 7px; font-size: 29px; }
+
+    .muted { color: var(--muted); font-size: 13px; }
+
+    .panel {
+      min-width: 0;
+      margin-bottom: 18px;
+      padding: 22px;
+      background: white;
+      border: 1px solid #eaf0f7;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px #18375a08;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .metric-label { color: var(--muted); font-size: 13px; }
+
+    .metric-value {
+      margin-top: 12px;
+      font-size: 27px;
+      font-weight: 750;
+      overflow-wrap: anywhere;
+    }
+
+    .teal { color: var(--teal); }
+    .blue { color: var(--blue); }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    input, button {
+      padding: 11px 13px;
+      border: 1px solid #dce6f1;
+      border-radius: 9px;
+      font: inherit;
+    }
+
+    input {
+      flex: 1;
+      min-width: 180px;
+      background: white;
+      color: var(--text);
+    }
+
+    button {
+      background: var(--navy);
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover { background: #204564; }
+
+    .device-card {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 18px;
+      padding: 20px;
+      margin-top: 15px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    .device-info {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .device-icon {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+      border-radius: 13px;
+      background: #e5f8f4;
+      font-size: 24px;
+    }
+
+    .device-name {
+      margin: 2px 0 8px;
+      font-size: 18px;
+      font-weight: 750;
+      overflow-wrap: anywhere;
+    }
+
+    .device-meta {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 20px;
+      background: #e1f8ed;
+      color: #07865d;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .reading-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(100px, 1fr));
+      gap: 10px;
+      min-width: 220px;
+    }
+
+    .reading-box {
+      padding: 12px;
+      background: #f4f8fc;
+      border-radius: 9px;
+    }
+
+    .reading-box span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      margin-bottom: 7px;
+    }
+
+    .reading-box strong { font-size: 18px; }
+
+    .table-wrap { overflow-x: auto; margin-top: 15px; }
+
+    table {
+      width: 100%;
+      min-width: 550px;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th, td {
+      padding: 13px 11px;
+      text-align: left;
+      white-space: nowrap;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th { background: #eef4fa; color: #3d5676; }
+    th:first-child { border-radius: 8px 0 0 8px; }
+    th:last-child { border-radius: 0 8px 8px 0; }
+
+    .temp { color: #078eaa; font-weight: 700; }
+    .humidity { color: var(--blue); font-weight: 700; }
+
+    .message {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 9px;
+      background: #f1f6fb;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    footer {
+      padding: 12px;
+      text-align: center;
+      color: #8494a9;
+      font-size: 11px;
+    }
+
+    @media (max-width: 900px) {
+      .app { display: block; }
+      .sidebar { width: 100%; padding: 15px; }
+      .brand { padding-bottom: 15px; }
+      .nav-label, .sidebar-bottom { display: none; }
+      nav { display: flex; overflow-x: auto; }
+      nav a { white-space: nowrap; }
+      .main { padding: 18px 13px; }
+      .metrics { grid-template-columns: 1fr; }
+      .reading-grid { min-width: 0; width: 100%; }
+      h1 { font-size: 25px; }
+    }
+  </style>
+</head>
+
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">◈</div>
+      <div>Plataforma<br>IoT Integrada</div>
+    </div>
+
+    <div class="nav-label">MENU PRINCIPAL</div>
+
+    <nav aria-label="Menu principal">
+      <a href="/index.html"><span class="nav-icon">▦</span>Dashboard</a>
+      <a href="/leituras.html"><span class="nav-icon">⌁</span>Leituras</a>
+      <a href="/dispositivos.html" class="active"><span class="nav-icon">▣</span>Dispositivos</a>
+      <a href="/alertas.html"><span class="nav-icon">♧</span>Alertas</a>
+      <a href="/relatorios.html"><span class="nav-icon">▤</span>Relatórios</a>
+      <a href="/configuracoes.html"><span class="nav-icon">⚙</span>Configurações</a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <strong id="apiStatus">● Verificando API</strong>
+      <p>Informações dos dispositivos identificados nas leituras.</p>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h1>Dispositivos</h1>
+        <div class="muted">Sensores identificados pela plataforma</div>
+      </div>
+      <div class="muted">Última consulta: <strong id="lastUpdate">--</strong></div>
+    </header>
+
+    <section class="metrics">
+      <article class="panel">
+        <div class="metric-label">Dispositivos identificados</div>
+        <div class="metric-value" id="totalDevices">--</div>
+      </article>
+
+      <article class="panel">
+        <div class="metric-label">Dispositivos com leitura</div>
+        <div class="metric-value teal" id="devicesWithReadings">--</div>
+      </article>
+
+      <article class="panel">
+        <div class="metric-label">Total de leituras consultadas</div>
+        <div class="metric-value blue" id="totalReadings">--</div>
+      </article>
+    </section>
+
+    <section class="panel">
+      <h2 style="margin:0;font-size:18px">Sensores encontrados</h2>
+      <p class="muted">
+        A lista é montada a partir dos identificadores presentes no histórico da API.
+      </p>
+
+      <div class="toolbar">
+        <input id="search" type="search"
+          placeholder="Buscar dispositivo..."
+          aria-label="Buscar dispositivo">
+        <button id="refresh" type="button">↻ Atualizar</button>
+      </div>
+
+      <div id="message" class="message" role="status">
+        Consultando dispositivos...
+      </div>
+
+      <div id="deviceList"></div>
+    </section>
+
+    <section class="panel">
+      <h2 style="margin:0;font-size:18px">Últimas leituras por dispositivo</h2>
+      <p class="muted">Medições mais recentes encontradas no histórico da API.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Dispositivo</th>
+              <th>Data e horário</th>
+              <th>Temperatura</th>
+              <th>Umidade</th>
+            </tr>
+          </thead>
+          <tbody id="latestTable">
+            <tr><td colspan="4">Carregando dados...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      Plataforma IoT Integrada · Projeto acadêmico de Internet das Coisas
+    </footer>
+  </main>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  let devices = [];
+
+  function normalize(item) {
+    return {
+      deviceId: String(item.deviceId || item.device_id || "sensor"),
+      temperature: Number(item.temperature),
+      humidity: Number(item.humidity),
+      timestamp: item.timestamp || item.measured_at ||
+        item.measuredAt || item.receivedAt || item.received_at
+    };
+  }
+
+  function formatDate(value) {
+    if (!value) return "Horário indisponível";
+    const date = new Date(value);
+    return Number.isNaN(date.getTime())
+      ? "Horário indisponível"
+      : date.toLocaleString("pt-BR");
+  }
+
+  function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, character => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    })[character]);
+  }
+
+  function buildDevices(readings) {
+    const map = new Map();
+
+    readings.forEach(reading => {
+      const previous = map.get(reading.deviceId);
+
+      if (!previous) {
+        map.set(reading.deviceId, {
+          deviceId: reading.deviceId,
+          temperature: reading.temperature,
+          humidity: reading.humidity,
+          timestamp: reading.timestamp,
+          count: 1
+        });
+      } else {
+        previous.count++;
+        const currentDate = reading.timestamp ? new Date(reading.timestamp).getTime() : 0;
+        const previousDate = previous.timestamp ? new Date(previous.timestamp).getTime() : 0;
+
+        if (currentDate >= previousDate) {
+          previous.temperature = reading.temperature;
+          previous.humidity = reading.humidity;
+          previous.timestamp = reading.timestamp;
+        }
+      }
+    });
+
+    return [...map.values()].sort((a, b) =>
+      a.deviceId.localeCompare(b.deviceId)
+    );
+  }
+
+  function renderDevices() {
+    const term = $("search").value.trim().toLowerCase();
+
+    const filtered = devices.filter(device =>
+      device.deviceId.toLowerCase().includes(term)
+    );
+
+    $("deviceList").replaceChildren();
+    $("totalDevices").textContent = devices.length;
+    $("devicesWithReadings").textContent = devices.filter(d => d.count > 0).length;
+
+    if (!filtered.length) {
+      const message = document.createElement("div");
+      message.className = "message";
+      message.textContent = term
+        ? "Nenhum dispositivo corresponde à sua busca."
+        : "Nenhum dispositivo foi identificado no histórico.";
+      $("deviceList").appendChild(message);
+    } else {
+      filtered.forEach(device => {
+        const card = document.createElement("article");
+        card.className = "device-card";
+
+        const info = document.createElement("div");
+        info.className = "device-info";
+
+        const icon = document.createElement("div");
+        icon.className = "device-icon";
+        icon.textContent = "▣";
+
+        const description = document.createElement("div");
+
+        const name = document.createElement("div");
+        name.className = "device-name";
+        name.textContent = device.deviceId;
+
+        const tag = document.createElement("span");
+        tag.className = "tag";
+        tag.textContent = "Leitura encontrada";
+
+        const meta = document.createElement("div");
+        meta.className = "device-meta";
+        meta.style.marginTop = "10px";
+
+        const lastReading = document.createElement("span");
+        lastReading.textContent = "Última leitura: " + formatDate(device.timestamp);
+
+        const count = document.createElement("span");
+        count.textContent = "Registros encontrados: " + device.count;
+
+        meta.append(lastReading, count);
+        description.append(name, tag, meta);
+        info.append(icon, description);
+
+        const readings = document.createElement("div");
+        readings.className = "reading-grid";
+
+        const temperature = document.createElement("div");
+        temperature.className = "reading-box";
+        temperature.innerHTML =
+          '<span>Temperatura</span><strong class="temp">' +
+          (Number.isFinite(device.temperature) ? device.temperature.toFixed(1) + " °C" : "--") +
+          "</strong>";
+
+        const humidity = document.createElement("div");
+        humidity.className = "reading-box";
+        humidity.innerHTML =
+          '<span>Umidade</span><strong class="humidity">' +
+          (Number.isFinite(device.humidity) ? device.humidity.toFixed(0) + " %" : "--") +
+          "</strong>";
+
+        readings.append(temperature, humidity);
+        card.append(info, readings);
+        $("deviceList").appendChild(card);
+      });
+    }
+
+    const table = $("latestTable");
+    table.replaceChildren();
+
+    if (!filtered.length) {
+      const row = table.insertRow();
+      const cell = row.insertCell();
+      cell.colSpan = 4;
+      cell.textContent = "Nenhuma leitura para exibir.";
+    } else {
+      filtered.forEach(device => {
+        const row = table.insertRow();
+
+        [
+          device.deviceId,
+          formatDate(device.timestamp),
+          Number.isFinite(device.temperature) ? device.temperature.toFixed(1) + " °C" : "--",
+          Number.isFinite(device.humidity) ? device.humidity.toFixed(0) + " %" : "--"
+        ].forEach((value, index) => {
+          const cell = row.insertCell();
+          cell.textContent = value;
+          if (index === 2) cell.className = "temp";
+          if (index === 3) cell.className = "humidity";
+        });
+      });
+    }
+  }
+
+  async function loadDevices() {
+    $("message").textContent = "Consultando a API...";
+    $("apiStatus").textContent = "● Verificando API";
+
+    try {
+      const response = await fetch("/api/leituras", { cache: "no-store" });
+
+      if (!response.ok) {
+        throw new Error("A API não conseguiu retornar o histórico.");
+      }
+
+      const data = await response.json();
+
+      if (!Array.isArray(data)) {
+        throw new Error("O histórico retornado não é uma lista.");
+      }
+
+      const readings = data.map(normalize).filter(item =>
+        Number.isFinite(item.temperature) &&
+        Number.isFinite(item.humidity)
+      );
+
+      devices = buildDevices(readings);
+
+      $("totalReadings").textContent = readings.length;
+      $("lastUpdate").textContent = new Date().toLocaleTimeString("pt-BR");
+      $("apiStatus").textContent = "● API conectada";
+      $("apiStatus").style.color = "#16a879";
+      $("message").textContent =
+        "Consulta concluída. Os dispositivos abaixo foram identificados pelos dados retornados pela API.";
+
+      renderDevices();
+
+    } catch (error) {
+      $("apiStatus").textContent = "● API indisponível";
+      $("apiStatus").style.color = "#dc4545";
+      $("message").textContent =
+        error.message + " Confira se o backend está em execução.";
+      console.error("Erro ao carregar dispositivos:", error);
+    }
+  }
+
+  $("search").addEventListener("input", renderDevices);
+  $("refresh").addEventListener("click", loadDevices);
+
+  loadDevices();
+</script>
+</body>
+</html>

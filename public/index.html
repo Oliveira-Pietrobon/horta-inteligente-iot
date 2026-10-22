@@ -1,0 +1,1103 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Plataforma IoT Integrada</title>
+
+  <style>
+    :root {
+      --navy: #102744;
+      --navy-light: #193958;
+      --teal: #079f91;
+      --blue: #2878f5;
+      --bg: #f3f7fc;
+      --text: #132b4c;
+      --muted: #637895;
+      --border: #e5edf6;
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    button, select {
+      font: inherit;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* MENU LATERAL */
+    .sidebar {
+      width: 246px;
+      flex-shrink: 0;
+      background: linear-gradient(180deg, var(--navy), #142f4c);
+      color: white;
+      padding: 25px 12px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 12px 32px;
+    }
+
+    .brand-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: #087f78;
+      font-size: 25px;
+    }
+
+    .brand-name {
+      font-size: 17px;
+      font-weight: 750;
+      line-height: 1.35;
+    }
+
+    .nav-label {
+      padding: 0 14px;
+      margin: 8px 0 12px;
+      color: #91a9c3;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.3px;
+    }
+
+    .nav {
+      display: grid;
+      gap: 7px;
+    }
+
+    .nav a {
+      text-decoration: none;
+      color: #d5e2f1;
+      padding: 13px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-radius: 11px;
+      font-size: 14px;
+      transition: background .2s;
+    }
+
+    .nav a:hover,
+    .nav a.active {
+      background: #164d68;
+      color: white;
+    }
+
+    .nav-icon {
+      width: 23px;
+      text-align: center;
+      font-size: 19px;
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      background: #1b3a58;
+      border: 1px solid #294863;
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .online {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .online-dot {
+      width: 9px;
+      height: 9px;
+      background: #16c784;
+      border-radius: 50%;
+    }
+
+    .sidebar-bottom p {
+      color: #c0d1e4;
+      font-size: 12px;
+      line-height: 1.6;
+      margin: 10px 0 0 18px;
+    }
+
+    /* CONTEÚDO */
+    .main {
+      flex: 1;
+      min-width: 0;
+      padding: 28px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin-bottom: 25px;
+    }
+
+    h1 {
+      font-size: 30px;
+      letter-spacing: -.8px;
+      margin: 0 0 7px;
+    }
+
+    .page-description {
+      color: var(--muted);
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .updated {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .updated strong {
+      display: block;
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    .period-select {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      padding: 12px;
+      min-width: 145px;
+    }
+
+    .connection {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 13px 16px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .connection-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .connection-dot {
+      width: 9px;
+      height: 9px;
+      background: #16b879;
+      border-radius: 50%;
+    }
+
+    .connection.error {
+      border-left: 4px solid #dc4545;
+    }
+
+    .connection.error .connection-dot {
+      background: #dc4545;
+    }
+
+    /* CARTÕES */
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .metric, .panel {
+      background: var(--white);
+      border: 1px solid #eaf0f7;
+      border-radius: 16px;
+      box-shadow: 0 5px 20px #18375a08;
+    }
+
+    .metric {
+      padding: 20px;
+      min-width: 0;
+    }
+
+    .metric-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .metric-icon {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #e5f8f4;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .metric-icon.blue {
+      background: #e8f0ff;
+    }
+
+    .metric-icon.purple {
+      background: #f1eaff;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .metric-value {
+      font-size: clamp(21px, 2vw, 29px);
+      font-weight: 750;
+      letter-spacing: -.6px;
+      overflow-wrap: anywhere;
+    }
+
+    .metric-value.device-value {
+      font-size: 21px;
+    }
+
+    .metric-detail {
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .good {
+      color: #07986b;
+    }
+
+    .blue-text {
+      color: var(--blue);
+    }
+
+    /* GRÁFICOS */
+    .charts {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .panel {
+      padding: 22px;
+      min-width: 0;
+    }
+
+    .panel-title {
+      font-size: 17px;
+      font-weight: 750;
+      margin: 0;
+    }
+
+    .panel-subtitle {
+      color: var(--muted);
+      font-size: 12px;
+      margin: 7px 0 18px;
+    }
+
+    .chart-wrap {
+      height: 235px;
+      width: 100%;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .chart-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 9px;
+      margin-top: 15px;
+    }
+
+    .chart-stat {
+      background: #f0f8fa;
+      border-radius: 9px;
+      padding: 10px;
+      border-left: 3px solid var(--teal);
+      min-width: 0;
+    }
+
+    .chart-stat.blue-stat {
+      background: #f0f5ff;
+      border-left-color: var(--blue);
+    }
+
+    .chart-stat strong {
+      display: block;
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+
+    .chart-stat span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    /* TABELA E INFORMAÇÕES */
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.8fr) minmax(260px, 1fr);
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 14px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 480px;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 13px 10px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    th {
+      background: #eef4fa;
+      color: #3d5676;
+      font-weight: 700;
+    }
+
+    .temp-cell {
+      color: #078eaa;
+      font-weight: 700;
+    }
+
+    .humidity-cell {
+      color: var(--blue);
+      font-weight: 700;
+    }
+
+    .empty-cell {
+      color: var(--muted);
+      text-align: center;
+      padding: 24px;
+    }
+
+    .info-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 15px;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 11px 10px;
+      border-radius: 8px;
+      background: #f6f9fc;
+      font-size: 12px;
+    }
+
+    .info-item span {
+      color: var(--muted);
+    }
+
+    .info-item strong {
+      text-align: right;
+    }
+
+    .system-message {
+      margin-top: 16px;
+      background: #e7f8f2;
+      color: #087c60;
+      border-radius: 10px;
+      padding: 13px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    footer {
+      padding: 25px 0 5px;
+      text-align: center;
+      color: #8494a9;
+      font-size: 11px;
+    }
+
+    @media (max-width: 1150px) {
+      .sidebar {
+        width: 210px;
+      }
+
+      .main {
+        padding: 22px;
+      }
+
+      .metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .bottom-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .app {
+        display: block;
+      }
+
+      .sidebar {
+        width: 100%;
+        padding: 15px;
+      }
+
+      .brand {
+        padding: 0 5px 15px;
+      }
+
+      .nav-label,
+      .sidebar-bottom {
+        display: none;
+      }
+
+      .nav {
+        display: flex;
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+
+      .nav a {
+        white-space: nowrap;
+        padding: 10px 12px;
+      }
+
+      .main {
+        padding: 18px 13px;
+      }
+
+      h1 {
+        font-size: 25px;
+      }
+
+      .charts {
+        grid-template-columns: 1fr;
+      }
+
+      .metric {
+        padding: 15px;
+      }
+
+      .panel {
+        padding: 17px;
+      }
+
+      .chart-wrap {
+        height: 220px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .top-actions {
+        width: 100%;
+      }
+
+      .period-select {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">◈</div>
+      <div class="brand-name">Plataforma<br>IoT Integrada</div>
+    </div>
+
+    <div class="nav-label">Menu principal</div>
+
+    <!-- Links corrigidos para abrir cada arquivo HTML -->
+    <nav class="nav" aria-label="Menu principal">
+      <a href="/index.html" class="active">
+        <span class="nav-icon">▦</span>Dashboard
+      </a>
+      <a href="/leituras.html">
+        <span class="nav-icon">⌁</span>Leituras
+      </a>
+      <a href="/dispositivos.html">
+        <span class="nav-icon">▣</span>Dispositivos
+      </a>
+      <a href="/alertas.html">
+        <span class="nav-icon">♧</span>Alertas
+      </a>
+      <a href="/relatorios.html">
+        <span class="nav-icon">▤</span>Relatórios
+      </a>
+      <a href="/configuracoes.html">
+        <span class="nav-icon">⚙</span>Configurações
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="online">
+        <span class="online-dot" id="sideDot"></span>
+        <span id="sideStatus">Verificando sistema</span>
+      </div>
+      <p id="sideDescription">Consultando a API...</p>
+    </div>
+  </aside>
+
+  <main class="main" id="dashboard">
+
+    <header class="topbar">
+      <div>
+        <h1>Dashboard</h1>
+        <p class="page-description">Monitoramento de sensores em tempo real</p>
+      </div>
+
+      <div class="top-actions">
+        <div class="updated">
+          Atualizado em
+          <strong id="horaConsulta">Aguardando dados...</strong>
+        </div>
+
+        <select class="period-select" id="periodo" aria-label="Período do gráfico">
+          <option value="20">Últimas 20 leituras</option>
+          <option value="50">Últimas 50 leituras</option>
+          <option value="100" selected>Últimas 100 leituras</option>
+        </select>
+      </div>
+    </header>
+
+    <section class="connection" id="statusBox" role="status">
+      <div class="connection-left">
+        <span class="connection-dot"></span>
+        <span><strong>Status:</strong> <span id="status">Conectando à API...</span></span>
+      </div>
+      <span id="updateInfo">Aguardando primeira consulta</span>
+    </section>
+
+    <section class="metrics">
+      <article class="metric">
+        <div class="metric-top">
+          <div class="metric-icon">🌡️</div>
+          <div class="metric-label">Temperatura atual</div>
+        </div>
+        <div class="metric-value" id="temperatura">-- °C</div>
+        <div class="metric-detail good">● Leitura recebida pela API</div>
+      </article>
+
+      <article class="metric">
+        <div class="metric-top">
+          <div class="metric-icon blue">💧</div>
+          <div class="metric-label">Umidade atual</div>
+        </div>
+        <div class="metric-value blue-text" id="umidade">-- %</div>
+        <div class="metric-detail blue-text">● Umidade do ambiente</div>
+      </article>
+
+      <article class="metric">
+        <div class="metric-top">
+          <div class="metric-icon">▣</div>
+          <div class="metric-label">Dispositivo</div>
+        </div>
+        <div class="metric-value device-value" id="dispositivo">--</div>
+        <div class="metric-detail good" id="deviceStatus">● Aguardando leitura</div>
+      </article>
+
+      <article class="metric">
+        <div class="metric-top">
+          <div class="metric-icon purple">◷</div>
+          <div class="metric-label">Última leitura</div>
+        </div>
+        <div class="metric-value" id="horario">--:--:--</div>
+        <div class="metric-detail" id="dataLeitura">Horário da última medição</div>
+      </article>
+    </section>
+
+    <section class="charts">
+      <article class="panel">
+        <h2 class="panel-title">🌡️ Histórico de temperatura</h2>
+        <p class="panel-subtitle">Medições em graus Celsius (°C)</p>
+
+        <div class="chart-wrap">
+          <canvas id="graficoTemperatura" aria-label="Gráfico de temperatura"></canvas>
+        </div>
+
+        <div class="chart-stats">
+          <div class="chart-stat">
+            <strong id="tempMedia">--</strong>
+            <span>Média</span>
+          </div>
+          <div class="chart-stat">
+            <strong id="tempMax">--</strong>
+            <span>Máxima</span>
+          </div>
+          <div class="chart-stat blue-stat">
+            <strong id="tempMin">--</strong>
+            <span>Mínima</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <h2 class="panel-title">💧 Histórico de umidade</h2>
+        <p class="panel-subtitle">Medições em porcentagem (%)</p>
+
+        <div class="chart-wrap">
+          <canvas id="graficoUmidade" aria-label="Gráfico de umidade"></canvas>
+        </div>
+
+        <div class="chart-stats">
+          <div class="chart-stat blue-stat">
+            <strong id="umidMedia">--</strong>
+            <span>Média</span>
+          </div>
+          <div class="chart-stat">
+            <strong id="umidMax">--</strong>
+            <span>Máxima</span>
+          </div>
+          <div class="chart-stat blue-stat">
+            <strong id="umidMin">--</strong>
+            <span>Mínima</span>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="bottom-grid">
+      <article class="panel">
+        <h2 class="panel-title">▤ Últimas leituras</h2>
+        <p class="panel-subtitle">Histórico recebido pela plataforma</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Horário</th>
+                <th>Dispositivo</th>
+                <th>Temperatura</th>
+                <th>Umidade</th>
+              </tr>
+            </thead>
+            <tbody id="historico">
+              <tr>
+                <td colspan="4" class="empty-cell">Aguardando dados...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="panel">
+        <h2 class="panel-title">ⓘ Informações do sistema</h2>
+        <p class="panel-subtitle">Tecnologias utilizadas no protótipo</p>
+
+        <div class="info-list">
+          <div class="info-item"><span>Protocolo de comunicação</span><strong>MQTT</strong></div>
+          <div class="info-item"><span>Banco de dados</span><strong>PostgreSQL</strong></div>
+          <div class="info-item"><span>Consulta de dados</span><strong>API REST</strong></div>
+          <div class="info-item"><span>Atualização da tela</span><strong>A cada 5 segundos</strong></div>
+          <div class="info-item"><span>Leituras retornadas</span><strong id="totalLeituras">0 registros</strong></div>
+        </div>
+
+        <div class="system-message" id="systemMessage">
+          Aguardando resposta dos serviços para atualizar o status.
+        </div>
+      </article>
+    </section>
+
+    <footer>
+      Plataforma IoT Integrada · Projeto acadêmico de Internet das Coisas
+    </footer>
+  </main>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  let leiturasAtuais = [];
+
+  function obterHorario(dado) {
+    return dado.timestamp || dado.measured_at ||
+      dado.measuredAt || dado.receivedAt || dado.received_at;
+  }
+
+  function normalizar(dado) {
+    return {
+      deviceId: dado.deviceId || dado.device_id || "sensor",
+      temperature: Number(dado.temperature),
+      humidity: Number(dado.humidity),
+      timestamp: obterHorario(dado)
+    };
+  }
+
+  function dataValida(valor) {
+    if (!valor) return null;
+    const data = new Date(valor);
+    return Number.isNaN(data.getTime()) ? null : data;
+  }
+
+  function formatarHorario(valor) {
+    const data = dataValida(valor);
+    return data ? data.toLocaleTimeString("pt-BR") : "--:--:--";
+  }
+
+  function formatarDataHora(valor) {
+    const data = dataValida(valor);
+    return data ? data.toLocaleString("pt-BR") : "Horário indisponível";
+  }
+
+  function mostrarStatus(mensagem, conectado) {
+    $("status").textContent = mensagem;
+    $("statusBox").classList.toggle("error", !conectado);
+
+    $("sideStatus").textContent = conectado
+      ? "API conectada"
+      : "API indisponível";
+
+    $("sideDescription").textContent = conectado
+      ? "A consulta de dados foi concluída."
+      : "Não foi possível consultar os dados.";
+
+    $("sideDot").style.background = conectado ? "#16c784" : "#dc4545";
+
+    $("deviceStatus").textContent = conectado
+      ? "● Dados recebidos pela API"
+      : "● Não foi possível atualizar";
+
+    $("deviceStatus").className =
+      "metric-detail " + (conectado ? "good" : "");
+
+    $("systemMessage").textContent = conectado
+      ? "A API respondeu e os dados do painel foram atualizados."
+      : "Falha na consulta à API. Verifique se o backend está funcionando.";
+  }
+
+  function desenharGrafico(canvasId, dados, campo, cor, maximo, unidade) {
+    const canvas = $(canvasId);
+    const area = canvas.getBoundingClientRect();
+
+    if (!area.width || !area.height) return;
+
+    const escala = window.devicePixelRatio || 1;
+    canvas.width = Math.round(area.width * escala);
+    canvas.height = Math.round(area.height * escala);
+
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(escala, 0, 0, escala, 0, 0);
+
+    const largura = area.width;
+    const altura = area.height;
+    const margem = { esquerda: 38, direita: 12, topo: 15, baixo: 32 };
+    const plotW = largura - margem.esquerda - margem.direita;
+    const plotH = altura - margem.topo - margem.baixo;
+
+    ctx.clearRect(0, 0, largura, altura);
+
+    const x = i => margem.esquerda +
+      (dados.length <= 1 ? plotW / 2 : i * plotW / (dados.length - 1));
+
+    const y = valor => margem.topo + plotH - (valor / maximo) * plotH;
+
+    ctx.font = "11px Arial";
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+
+    for (let valor = 0; valor <= maximo; valor += maximo / 5) {
+      const py = y(valor);
+
+      ctx.beginPath();
+      ctx.strokeStyle = "#e7edf5";
+      ctx.lineWidth = 1;
+      ctx.moveTo(margem.esquerda, py);
+      ctx.lineTo(largura - margem.direita, py);
+      ctx.stroke();
+
+      ctx.fillStyle = "#637895";
+      ctx.fillText(String(Math.round(valor)), margem.esquerda - 7, py);
+    }
+
+    const pontos = dados
+      .map((dado, i) => ({ i, valor: dado[campo] }))
+      .filter(p => Number.isFinite(p.valor));
+
+    if (!pontos.length) {
+      ctx.fillStyle = "#637895";
+      ctx.textAlign = "center";
+      ctx.fillText("Sem dados para exibir", largura / 2, altura / 2);
+      return;
+    }
+
+    ctx.beginPath();
+    pontos.forEach((p, indice) => {
+      if (indice === 0) ctx.moveTo(x(p.i), y(p.valor));
+      else ctx.lineTo(x(p.i), y(p.valor));
+    });
+
+    ctx.lineTo(x(pontos[pontos.length - 1].i), margem.topo + plotH);
+    ctx.lineTo(x(pontos[0].i), margem.topo + plotH);
+    ctx.closePath();
+
+    const gradiente = ctx.createLinearGradient(0, margem.topo, 0, altura);
+    gradiente.addColorStop(0, cor + "35");
+    gradiente.addColorStop(1, cor + "00");
+    ctx.fillStyle = gradiente;
+    ctx.fill();
+
+    ctx.beginPath();
+    pontos.forEach((p, indice) => {
+      if (indice === 0) ctx.moveTo(x(p.i), y(p.valor));
+      else ctx.lineTo(x(p.i), y(p.valor));
+    });
+
+    ctx.strokeStyle = cor;
+    ctx.lineWidth = 2.2;
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+    ctx.stroke();
+
+    pontos.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(x(p.i), y(p.valor), 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = cor;
+      ctx.fill();
+    });
+
+    ctx.font = "10px Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+
+    const marcas = Math.min(5, dados.length);
+
+    for (let i = 0; i < marcas; i++) {
+      const indice = marcas === 1 ? 0 :
+        Math.round(i * (dados.length - 1) / (marcas - 1));
+
+      ctx.fillStyle = "#637895";
+      ctx.fillText(
+        formatarHorario(dados[indice].timestamp),
+        x(indice),
+        altura - margem.baixo + 9
+      );
+    }
+
+    ctx.textAlign = "right";
+    ctx.fillText(unidade, largura - margem.direita, 5);
+  }
+
+  function atualizarEstatisticas(dados) {
+    const temperaturas = dados
+      .map(d => d.temperature)
+      .filter(Number.isFinite);
+
+    const umidades = dados
+      .map(d => d.humidity)
+      .filter(Number.isFinite);
+
+    if (temperaturas.length) {
+      $("tempMedia").textContent =
+        (temperaturas.reduce((a, b) => a + b, 0) / temperaturas.length).toFixed(1) + " °C";
+      $("tempMax").textContent = Math.max(...temperaturas).toFixed(1) + " °C";
+      $("tempMin").textContent = Math.min(...temperaturas).toFixed(1) + " °C";
+    }
+
+    if (umidades.length) {
+      $("umidMedia").textContent =
+        (umidades.reduce((a, b) => a + b, 0) / umidades.length).toFixed(0) + " %";
+      $("umidMax").textContent = Math.max(...umidades).toFixed(0) + " %";
+      $("umidMin").textContent = Math.min(...umidades).toFixed(0) + " %";
+    }
+  }
+
+  function mostrarHistorico(dados) {
+    const tbody = $("historico");
+    tbody.replaceChildren();
+
+    if (!dados.length) {
+      const tr = document.createElement("tr");
+      const td = document.createElement("td");
+      td.colSpan = 4;
+      td.className = "empty-cell";
+      td.textContent = "Nenhuma leitura encontrada.";
+      tr.appendChild(td);
+      tbody.appendChild(tr);
+      return;
+    }
+
+    dados.slice(-8).reverse().forEach(dado => {
+      const tr = document.createElement("tr");
+
+      const valores = [
+        formatarDataHora(dado.timestamp),
+        dado.deviceId,
+        Number.isFinite(dado.temperature)
+          ? dado.temperature.toFixed(1) + " °C" : "--",
+        Number.isFinite(dado.humidity)
+          ? dado.humidity.toFixed(0) + " %" : "--"
+      ];
+
+      valores.forEach((valor, indice) => {
+        const td = document.createElement("td");
+        td.textContent = valor;
+
+        if (indice === 2) td.className = "temp-cell";
+        if (indice === 3) td.className = "humidity-cell";
+
+        tr.appendChild(td);
+      });
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderizarPainel(ultima, lista) {
+    const quantidade = Number($("periodo").value);
+    const leituras = lista.slice(-quantidade);
+
+    $("temperatura").textContent = ultima.temperature.toFixed(1) + " °C";
+    $("umidade").textContent = ultima.humidity.toFixed(0) + " %";
+    $("dispositivo").textContent = ultima.deviceId;
+    $("horario").textContent = formatarHorario(ultima.timestamp);
+    $("dataLeitura").textContent = formatarDataHora(ultima.timestamp);
+
+    $("horaConsulta").textContent = new Date().toLocaleTimeString("pt-BR");
+    $("updateInfo").textContent =
+      "Última consulta: " + new Date().toLocaleTimeString("pt-BR");
+
+    $("totalLeituras").textContent =
+      lista.length + (lista.length === 1 ? " registro" : " registros");
+
+    mostrarHistorico(lista);
+    atualizarEstatisticas(leituras);
+
+    desenharGrafico(
+      "graficoTemperatura", leituras, "temperature", "#079f91", 40, "°C"
+    );
+
+    desenharGrafico(
+      "graficoUmidade", leituras, "humidity", "#2878f5", 100, "%"
+    );
+  }
+
+  async function atualizarPainel() {
+    try {
+      const [respostaUltima, respostaHistorico] = await Promise.all([
+        fetch("/api/leituras/ultima", { cache: "no-store" }),
+        fetch("/api/leituras", { cache: "no-store" })
+      ]);
+
+      if (!respostaUltima.ok || !respostaHistorico.ok) {
+        throw new Error("Não foi possível consultar os dados da API.");
+      }
+
+      const ultima = normalizar(await respostaUltima.json());
+      const listaBruta = await respostaHistorico.json();
+
+      if (!Array.isArray(listaBruta)) {
+        throw new Error("O histórico retornado não é uma lista.");
+      }
+
+      const lista = listaBruta
+        .map(normalizar)
+        .filter(d =>
+          Number.isFinite(d.temperature) &&
+          Number.isFinite(d.humidity)
+        );
+
+      if (!Number.isFinite(ultima.temperature) ||
+          !Number.isFinite(ultima.humidity)) {
+        throw new Error("A última leitura possui valores inválidos.");
+      }
+
+      if (!lista.length) lista.push(ultima);
+
+      leiturasAtuais = lista;
+      renderizarPainel(ultima, lista);
+      mostrarStatus("Conectado — dados recebidos da API.", true);
+
+    } catch (erro) {
+      mostrarStatus("Falha ao consultar os dados.", false);
+      $("updateInfo").textContent = erro.message;
+      console.error("Erro ao atualizar o dashboard:", erro);
+    }
+  }
+
+  $("periodo").addEventListener("change", () => {
+    if (!leiturasAtuais.length) return;
+
+    const ultima = leiturasAtuais[leiturasAtuais.length - 1];
+    renderizarPainel(ultima, leiturasAtuais);
+  });
+
+  window.addEventListener("resize", () => {
+    if (leiturasAtuais.length) {
+      const ultima = leiturasAtuais[leiturasAtuais.length - 1];
+      renderizarPainel(ultima, leiturasAtuais);
+    }
+  });
+
+  // Destaca automaticamente a página atual no menu.
+  const paginaAtual = window.location.pathname.split("/").pop() || "index.html";
+
+  document.querySelectorAll(".nav a").forEach(link => {
+    const destino = link.getAttribute("href").replace(/^\//, "");
+    link.classList.toggle("active", destino === paginaAtual);
+  });
+
+  atualizarPainel();
+  setInterval(atualizarPainel, 5000);
+</script>
+</body>
+</html>

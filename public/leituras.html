@@ -1,0 +1,528 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leituras | Plataforma IoT Integrada</title>
+
+  <style>
+    :root {
+      --navy: #102744;
+      --teal: #079f91;
+      --blue: #2878f5;
+      --bg: #f3f7fc;
+      --text: #132b4c;
+      --muted: #637895;
+      --border: #e5edf6;
+      --white: #fff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .app { min-height: 100vh; display: flex; }
+
+    .sidebar {
+      width: 235px;
+      flex-shrink: 0;
+      background: linear-gradient(180deg, #102744, #142f4c);
+      color: white;
+      padding: 24px 12px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 10px 32px;
+      font-weight: 750;
+      font-size: 16px;
+      line-height: 1.4;
+    }
+
+    .brand-icon {
+      background: #087f78;
+      border-radius: 12px;
+      width: 43px;
+      height: 43px;
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+    }
+
+    .nav-label {
+      font-size: 11px;
+      color: #91a9c3;
+      letter-spacing: 1px;
+      padding: 0 13px;
+      margin-bottom: 12px;
+    }
+
+    nav { display: grid; gap: 7px; }
+
+    nav a {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      text-decoration: none;
+      color: #d5e2f1;
+      padding: 13px;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+
+    nav a:hover, nav a.active {
+      background: #164d68;
+      color: white;
+    }
+
+    .nav-icon { width: 22px; text-align: center; font-size: 18px; }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      background: #1b3a58;
+      border: 1px solid #294863;
+      padding: 15px;
+      border-radius: 12px;
+      font-size: 13px;
+    }
+
+    .sidebar-bottom p {
+      color: #c0d1e4;
+      font-size: 12px;
+      line-height: 1.5;
+      margin-bottom: 0;
+    }
+
+    .main { flex: 1; min-width: 0; padding: 28px; }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 24px;
+    }
+
+    h1 { font-size: 29px; margin: 0 0 7px; }
+
+    .muted { color: var(--muted); font-size: 14px; }
+
+    .panel {
+      background: white;
+      border: 1px solid #eaf0f7;
+      border-radius: 15px;
+      padding: 22px;
+      box-shadow: 0 5px 20px #18375a08;
+      margin-bottom: 18px;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .metric-label { color: var(--muted); font-size: 13px; }
+
+    .metric-value {
+      font-size: 27px;
+      font-weight: 750;
+      margin-top: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .teal { color: var(--teal); }
+    .blue { color: var(--blue); }
+
+    .filters {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    input, select, button {
+      font: inherit;
+      border: 1px solid #dce6f1;
+      border-radius: 9px;
+      padding: 11px 12px;
+      background: white;
+      color: var(--text);
+    }
+
+    input { flex: 1; min-width: 180px; }
+    select { min-width: 160px; }
+
+    button {
+      background: var(--navy);
+      color: white;
+      border-color: var(--navy);
+      cursor: pointer;
+    }
+
+    button:hover { background: #204564; }
+
+    .table-wrap { overflow-x: auto; margin-top: 18px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px;
+      font-size: 13px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 14px 12px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    th {
+      background: #eef4fa;
+      color: #3d5676;
+      font-weight: 700;
+    }
+
+    th:first-child { border-radius: 8px 0 0 8px; }
+    th:last-child { border-radius: 0 8px 8px 0; }
+
+    .temp { color: #078eaa; font-weight: 700; }
+    .humidity { color: var(--blue); font-weight: 700; }
+
+    .status-pill {
+      display: inline-block;
+      background: #e1f8ed;
+      color: #07865d;
+      padding: 5px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+    }
+
+    .message {
+      padding: 15px;
+      border-radius: 9px;
+      background: #f1f6fb;
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 15px;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .pagination button:disabled {
+      opacity: .4;
+      cursor: not-allowed;
+    }
+
+    footer {
+      text-align: center;
+      color: #8494a9;
+      font-size: 11px;
+      padding: 12px;
+    }
+
+    @media (max-width: 850px) {
+      .app { display: block; }
+      .sidebar { width: 100%; padding: 15px; }
+      .brand { padding-bottom: 15px; }
+      .nav-label, .sidebar-bottom { display: none; }
+      nav { display: flex; overflow-x: auto; }
+      nav a { white-space: nowrap; }
+      .main { padding: 18px 13px; }
+      .metrics { grid-template-columns: 1fr; }
+      h1 { font-size: 25px; }
+    }
+  </style>
+</head>
+
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">◈</div>
+      <div>Plataforma<br>IoT Integrada</div>
+    </div>
+
+    <div class="nav-label">MENU PRINCIPAL</div>
+
+    <nav aria-label="Menu principal">
+      <a href="/index.html"><span class="nav-icon">▦</span>Dashboard</a>
+      <a href="/leituras.html" class="active"><span class="nav-icon">⌁</span>Leituras</a>
+      <a href="/dispositivos.html"><span class="nav-icon">▣</span>Dispositivos</a>
+      <a href="/alertas.html"><span class="nav-icon">♧</span>Alertas</a>
+      <a href="/relatorios.html"><span class="nav-icon">▤</span>Relatórios</a>
+      <a href="/configuracoes.html"><span class="nav-icon">⚙</span>Configurações</a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <strong id="connectionStatus">● Verificando API</strong>
+      <p>Histórico de dados recebidos pela plataforma.</p>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h1>Leituras</h1>
+        <div class="muted">Histórico de medições dos sensores</div>
+      </div>
+      <div class="muted">Última consulta: <strong id="lastUpdate">--</strong></div>
+    </header>
+
+    <section class="metrics">
+      <article class="panel">
+        <div class="metric-label">Total de leituras carregadas</div>
+        <div class="metric-value" id="total">--</div>
+      </article>
+      <article class="panel">
+        <div class="metric-label">Temperatura mais recente</div>
+        <div class="metric-value teal" id="temperature">-- °C</div>
+      </article>
+      <article class="panel">
+        <div class="metric-label">Umidade mais recente</div>
+        <div class="metric-value blue" id="humidity">-- %</div>
+      </article>
+    </section>
+
+    <section class="panel">
+      <h2 style="margin:0;font-size:18px">Histórico de medições</h2>
+      <p class="muted">Pesquise por dispositivo e filtre a quantidade de registros exibidos.</p>
+
+      <div class="filters">
+        <input id="search" type="search" placeholder="Buscar dispositivo..." aria-label="Buscar dispositivo">
+        <select id="limit" aria-label="Quantidade de leituras">
+          <option value="20">20 registros</option>
+          <option value="50">50 registros</option>
+          <option value="100" selected>100 registros</option>
+        </select>
+        <button id="refresh" type="button">↻ Atualizar</button>
+      </div>
+
+      <div id="message" class="message" role="status">Conectando à API...</div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Data e horário</th>
+              <th>Dispositivo</th>
+              <th>Temperatura</th>
+              <th>Umidade</th>
+              <th>Registro</th>
+            </tr>
+          </thead>
+          <tbody id="history">
+            <tr><td colspan="5">Carregando leituras...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination">
+        <span id="pageInfo">Nenhum registro carregado</span>
+        <div>
+          <button id="previous" type="button" disabled>Anterior</button>
+          <button id="next" type="button" disabled>Próxima</button>
+        </div>
+      </div>
+    </section>
+
+    <footer>Plataforma IoT Integrada · Projeto acadêmico de Internet das Coisas</footer>
+  </main>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+
+  let allReadings = [];
+  let currentPage = 1;
+  const pageSize = 10;
+
+  function normalize(item) {
+    return {
+      deviceId: item.deviceId || item.device_id || "sensor",
+      temperature: Number(item.temperature),
+      humidity: Number(item.humidity),
+      timestamp: item.timestamp || item.measured_at ||
+        item.measuredAt || item.receivedAt || item.received_at
+    };
+  }
+
+  function dateTime(value) {
+    if (!value) return "Horário indisponível";
+    const date = new Date(value);
+    return Number.isNaN(date.getTime())
+      ? "Horário indisponível"
+      : date.toLocaleString("pt-BR");
+  }
+
+  function filteredReadings() {
+    const term = $("search").value.trim().toLowerCase();
+    const limit = Number($("limit").value);
+
+    return allReadings
+      .filter(item => item.deviceId.toLowerCase().includes(term))
+      .slice(-limit)
+      .reverse();
+  }
+
+  function render() {
+    const data = filteredReadings();
+    const tbody = $("history");
+    tbody.replaceChildren();
+
+    $("total").textContent = allReadings.length;
+    $("pageInfo").textContent = data.length
+      ? `${data.length} registros encontrados`
+      : "Nenhum registro encontrado";
+
+    const pageCount = Math.max(1, Math.ceil(data.length / pageSize));
+    currentPage = Math.min(currentPage, pageCount);
+
+    const start = (currentPage - 1) * pageSize;
+    const pageData = data.slice(start, start + pageSize);
+
+    if (!pageData.length) {
+      const row = tbody.insertRow();
+      const cell = row.insertCell();
+      cell.colSpan = 5;
+      cell.textContent = "Não existem leituras para este filtro.";
+      cell.className = "message";
+    } else {
+      pageData.forEach(item => {
+        const row = tbody.insertRow();
+        const values = [
+          dateTime(item.timestamp),
+          item.deviceId,
+          Number.isFinite(item.temperature) ? item.temperature.toFixed(1) + " °C" : "--",
+          Number.isFinite(item.humidity) ? item.humidity.toFixed(0) + " %" : "--"
+        ];
+
+        values.forEach((value, index) => {
+          const cell = row.insertCell();
+          cell.textContent = value;
+          if (index === 2) cell.className = "temp";
+          if (index === 3) cell.className = "humidity";
+        });
+
+        const statusCell = row.insertCell();
+        const pill = document.createElement("span");
+        pill.className = "status-pill";
+        pill.textContent = "Recebida";
+        statusCell.appendChild(pill);
+      });
+    }
+
+    $("previous").disabled = currentPage <= 1;
+    $("next").disabled = currentPage >= pageCount;
+    $("pageInfo").textContent = data.length
+      ? `Página ${currentPage} de ${pageCount} · ${data.length} registros`
+      : "Nenhum registro encontrado";
+  }
+
+  async function loadReadings() {
+    $("message").textContent = "Consultando a API...";
+
+    try {
+      const [latestResponse, historyResponse] = await Promise.all([
+        fetch("/api/leituras/ultima", { cache: "no-store" }),
+        fetch("/api/leituras", { cache: "no-store" })
+      ]);
+
+      if (!latestResponse.ok || !historyResponse.ok) {
+        throw new Error("A API não conseguiu retornar as leituras.");
+      }
+
+      const latest = normalize(await latestResponse.json());
+      const history = await historyResponse.json();
+
+      if (!Array.isArray(history)) {
+        throw new Error("O histórico retornado não é uma lista.");
+      }
+
+      allReadings = history
+        .map(normalize)
+        .filter(item =>
+          Number.isFinite(item.temperature) &&
+          Number.isFinite(item.humidity)
+        );
+
+      if (!allReadings.length &&
+          Number.isFinite(latest.temperature) &&
+          Number.isFinite(latest.humidity)) {
+        allReadings = [latest];
+      }
+
+      $("temperature").textContent =
+        Number.isFinite(latest.temperature) ? latest.temperature.toFixed(1) + " °C" : "-- °C";
+      $("humidity").textContent =
+        Number.isFinite(latest.humidity) ? latest.humidity.toFixed(0) + " %" : "-- %";
+
+      $("lastUpdate").textContent = new Date().toLocaleTimeString("pt-BR");
+      $("connectionStatus").textContent = "● API conectada";
+      $("connectionStatus").style.color = "#16a879";
+      $("message").textContent =
+        "Dados carregados com sucesso. A tabela mostra as leituras retornadas pela API.";
+
+      currentPage = 1;
+      render();
+
+    } catch (error) {
+      $("connectionStatus").textContent = "● API indisponível";
+      $("connectionStatus").style.color = "#dc4545";
+      $("message").textContent =
+        error.message + " Confira se o backend está em execução.";
+      console.error("Erro ao carregar leituras:", error);
+    }
+  }
+
+  $("search").addEventListener("input", () => {
+    currentPage = 1;
+    render();
+  });
+
+  $("limit").addEventListener("change", () => {
+    currentPage = 1;
+    render();
+  });
+
+  $("refresh").addEventListener("click", loadReadings);
+
+  $("previous").addEventListener("click", () => {
+    if (currentPage > 1) {
+      currentPage--;
+      render();
+    }
+  });
+
+  $("next").addEventListener("click", () => {
+    currentPage++;
+    render();
+  });
+
+  loadReadings();
+</script>
+</body>
+</html>

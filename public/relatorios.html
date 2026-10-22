@@ -1,0 +1,621 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatórios | Plataforma IoT Integrada</title>
+
+  <style>
+    :root {
+      --navy: #102744;
+      --teal: #079f91;
+      --blue: #2878f5;
+      --bg: #f3f7fc;
+      --text: #132b4c;
+      --muted: #637895;
+      --border: #e5edf6;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .app { min-height: 100vh; display: flex; }
+
+    .sidebar {
+      width: 235px;
+      flex-shrink: 0;
+      padding: 24px 12px;
+      display: flex;
+      flex-direction: column;
+      color: white;
+      background: linear-gradient(180deg, #102744, #142f4c);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 10px 32px;
+      font-size: 16px;
+      font-weight: 750;
+      line-height: 1.4;
+    }
+
+    .brand-icon {
+      width: 43px;
+      height: 43px;
+      display: grid;
+      place-items: center;
+      background: #087f78;
+      border-radius: 12px;
+      font-size: 24px;
+    }
+
+    .nav-label {
+      padding: 0 13px;
+      margin-bottom: 12px;
+      color: #91a9c3;
+      font-size: 11px;
+      letter-spacing: 1px;
+    }
+
+    nav { display: grid; gap: 7px; }
+
+    nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px;
+      border-radius: 10px;
+      color: #d5e2f1;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    nav a:hover, nav a.active {
+      color: white;
+      background: #164d68;
+    }
+
+    .nav-icon { width: 22px; text-align: center; font-size: 18px; }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      padding: 15px;
+      background: #1b3a58;
+      border: 1px solid #294863;
+      border-radius: 12px;
+      font-size: 13px;
+    }
+
+    .sidebar-bottom p {
+      color: #c0d1e4;
+      font-size: 12px;
+      line-height: 1.5;
+      margin-bottom: 0;
+    }
+
+    .main { flex: 1; min-width: 0; padding: 28px; }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 24px;
+    }
+
+    h1 { margin: 0 0 7px; font-size: 29px; }
+    h2 { font-size: 18px; margin: 0; }
+
+    .muted { color: var(--muted); font-size: 13px; }
+
+    .panel {
+      min-width: 0;
+      padding: 22px;
+      margin-bottom: 18px;
+      background: white;
+      border: 1px solid #eaf0f7;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px #18375a08;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .metric-label { color: var(--muted); font-size: 12px; }
+
+    .metric-value {
+      margin-top: 12px;
+      font-size: 25px;
+      font-weight: 750;
+      overflow-wrap: anywhere;
+    }
+
+    .teal { color: var(--teal); }
+    .blue { color: var(--blue); }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .field { display: grid; gap: 7px; }
+
+    .field label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid #dce6f1;
+      border-radius: 9px;
+      font: inherit;
+    }
+
+    input, select {
+      color: var(--text);
+      background: white;
+    }
+
+    button {
+      background: var(--navy);
+      color: white;
+      border-color: var(--navy);
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    button:hover { background: #204564; }
+
+    button.secondary {
+      background: white;
+      color: var(--navy);
+      border-color: #dce6f1;
+    }
+
+    button.secondary:hover { background: #f1f6fb; }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .actions button { width: auto; }
+
+    .message {
+      padding: 13px;
+      margin-top: 15px;
+      border-radius: 9px;
+      background: #f1f6fb;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .table-wrap { overflow-x: auto; margin-top: 17px; }
+
+    table {
+      width: 100%;
+      min-width: 570px;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    th, td {
+      padding: 13px 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    th { background: #eef4fa; color: #3d5676; }
+    th:first-child { border-radius: 8px 0 0 8px; }
+    th:last-child { border-radius: 0 8px 8px 0; }
+
+    .temp { color: #078eaa; font-weight: 700; }
+    .humidity { color: var(--blue); font-weight: 700; }
+
+    .empty { text-align: center; color: var(--muted); padding: 24px; }
+
+    footer {
+      padding: 12px;
+      text-align: center;
+      color: #8494a9;
+      font-size: 11px;
+    }
+
+    @media (max-width: 1100px) {
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 850px) {
+      .app { display: block; }
+      .sidebar { width: 100%; padding: 15px; }
+      .brand { padding-bottom: 15px; }
+      .nav-label, .sidebar-bottom { display: none; }
+      nav { display: flex; overflow-x: auto; }
+      nav a { white-space: nowrap; }
+      .main { padding: 18px 13px; }
+      .filters { grid-template-columns: 1fr; }
+      h1 { font-size: 25px; }
+    }
+
+    @media (max-width: 420px) {
+      .metrics { grid-template-columns: 1fr; }
+      .panel { padding: 16px; }
+    }
+  </style>
+</head>
+
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">◈</div>
+      <div>Plataforma<br>IoT Integrada</div>
+    </div>
+
+    <div class="nav-label">MENU PRINCIPAL</div>
+
+    <nav aria-label="Menu principal">
+      <a href="/index.html"><span class="nav-icon">▦</span>Dashboard</a>
+      <a href="/leituras.html"><span class="nav-icon">⌁</span>Leituras</a>
+      <a href="/dispositivos.html"><span class="nav-icon">▣</span>Dispositivos</a>
+      <a href="/alertas.html"><span class="nav-icon">♧</span>Alertas</a>
+      <a href="/relatorios.html" class="active"><span class="nav-icon">▤</span>Relatórios</a>
+      <a href="/configuracoes.html"><span class="nav-icon">⚙</span>Configurações</a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <strong id="apiStatus">● Verificando API</strong>
+      <p>Consulta e exportação das leituras disponíveis.</p>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h1>Relatórios</h1>
+        <div class="muted">Consulte, filtre e exporte os dados dos sensores</div>
+      </div>
+      <div class="muted">Última consulta: <strong id="lastUpdate">--</strong></div>
+    </header>
+
+    <section class="panel">
+      <h2>Filtros do relatório</h2>
+      <p class="muted">Escolha o período e o dispositivo para analisar os registros retornados pela API.</p>
+
+      <div class="filters">
+        <div class="field">
+          <label for="startDate">Data inicial</label>
+          <input id="startDate" type="date">
+        </div>
+
+        <div class="field">
+          <label for="endDate">Data final</label>
+          <input id="endDate" type="date">
+        </div>
+
+        <div class="field">
+          <label for="deviceFilter">Dispositivo</label>
+          <select id="deviceFilter">
+            <option value="all">Todos os dispositivos</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="applyFilters" type="button">Aplicar filtros</button>
+        <button id="clearFilters" type="button" class="secondary">Limpar filtros</button>
+        <button id="exportCsv" type="button">⇩ Exportar CSV</button>
+        <button id="refresh" type="button" class="secondary">↻ Atualizar dados</button>
+      </div>
+
+      <div class="message" id="message" role="status">
+        Consultando a API...
+      </div>
+    </section>
+
+    <section class="metrics">
+      <article class="panel">
+        <div class="metric-label">Registros no relatório</div>
+        <div class="metric-value" id="total">--</div>
+      </article>
+
+      <article class="panel">
+        <div class="metric-label">Temperatura média</div>
+        <div class="metric-value teal" id="avgTemp">-- °C</div>
+      </article>
+
+      <article class="panel">
+        <div class="metric-label">Umidade média</div>
+        <div class="metric-value blue" id="avgHumidity">-- %</div>
+      </article>
+
+      <article class="panel">
+        <div class="metric-label">Dispositivos encontrados</div>
+        <div class="metric-value" id="deviceCount">--</div>
+      </article>
+    </section>
+
+    <section class="panel">
+      <h2>Detalhamento das medições</h2>
+      <p class="muted">Os registros são exibidos do mais recente para o mais antigo.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Data e horário</th>
+              <th>Dispositivo</th>
+              <th>Temperatura</th>
+              <th>Umidade</th>
+            </tr>
+          </thead>
+          <tbody id="reportTable">
+            <tr><td colspan="4" class="empty">Carregando registros...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      Plataforma IoT Integrada · Projeto acadêmico de Internet das Coisas
+    </footer>
+  </main>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+
+  let allReadings = [];
+  let reportReadings = [];
+
+  function normalize(item) {
+    return {
+      deviceId: String(item.deviceId || item.device_id || "sensor"),
+      temperature: Number(item.temperature),
+      humidity: Number(item.humidity),
+      timestamp: item.timestamp || item.measured_at ||
+        item.measuredAt || item.receivedAt || item.received_at
+    };
+  }
+
+  function getDate(item) {
+    if (!item.timestamp) return null;
+    const date = new Date(item.timestamp);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  function formatDate(value) {
+    const date = getDate({ timestamp: value });
+    return date ? date.toLocaleString("pt-BR") : "Horário indisponível";
+  }
+
+  function localDateInput(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+
+  function populateDevices() {
+    const select = $("deviceFilter");
+    const current = select.value;
+    const ids = [...new Set(allReadings.map(item => item.deviceId))].sort();
+
+    select.replaceChildren();
+
+    const allOption = document.createElement("option");
+    allOption.value = "all";
+    allOption.textContent = "Todos os dispositivos";
+    select.appendChild(allOption);
+
+    ids.forEach(id => {
+      const option = document.createElement("option");
+      option.value = id;
+      option.textContent = id;
+      select.appendChild(option);
+    });
+
+    select.value = ids.includes(current) ? current : "all";
+  }
+
+  function applyFilters() {
+    const startValue = $("startDate").value;
+    const endValue = $("endDate").value;
+    const device = $("deviceFilter").value;
+
+    if (startValue && endValue && startValue > endValue) {
+      $("message").textContent = "A data inicial precisa ser anterior ou igual à data final.";
+      return;
+    }
+
+    const start = startValue ? new Date(startValue + "T00:00:00") : null;
+    const end = endValue ? new Date(endValue + "T23:59:59.999") : null;
+
+    reportReadings = allReadings.filter(item => {
+      const date = getDate(item);
+
+      if (device !== "all" && item.deviceId !== device) return false;
+
+      // Se houver filtro de data, registros sem data válida não entram.
+      if ((start || end) && !date) return false;
+      if (start && date < start) return false;
+      if (end && date > end) return false;
+
+      return true;
+    });
+
+    renderReport();
+  }
+
+  function renderReport() {
+    const data = reportReadings;
+    $("total").textContent = data.length;
+
+    const temperatures = data.map(item => item.temperature).filter(Number.isFinite);
+    const humidities = data.map(item => item.humidity).filter(Number.isFinite);
+
+    const average = values => values.length
+      ? values.reduce((sum, value) => sum + value, 0) / values.length
+      : null;
+
+    const avgT = average(temperatures);
+    const avgH = average(humidities);
+
+    $("avgTemp").textContent = avgT === null ? "-- °C" : avgT.toFixed(1) + " °C";
+    $("avgHumidity").textContent = avgH === null ? "-- %" : avgH.toFixed(1) + " %";
+    $("deviceCount").textContent = new Set(data.map(item => item.deviceId)).size;
+
+    const tbody = $("reportTable");
+    tbody.replaceChildren();
+
+    const ordered = [...data].sort((a, b) => {
+      const dateA = getDate(a)?.getTime() ?? 0;
+      const dateB = getDate(b)?.getTime() ?? 0;
+      return dateB - dateA;
+    });
+
+    if (!ordered.length) {
+      const row = tbody.insertRow();
+      const cell = row.insertCell();
+      cell.colSpan = 4;
+      cell.className = "empty";
+      cell.textContent = "Nenhum registro encontrado para os filtros selecionados.";
+    } else {
+      ordered.forEach(item => {
+        const row = tbody.insertRow();
+        const values = [
+          formatDate(item.timestamp),
+          item.deviceId,
+          Number.isFinite(item.temperature) ? item.temperature.toFixed(1) + " °C" : "--",
+          Number.isFinite(item.humidity) ? item.humidity.toFixed(1) + " %" : "--"
+        ];
+
+        values.forEach((value, index) => {
+          const cell = row.insertCell();
+          cell.textContent = value;
+          if (index === 2) cell.className = "temp";
+          if (index === 3) cell.className = "humidity";
+        });
+      });
+    }
+
+    $("message").textContent =
+      `${data.length} registro(s) no relatório. A exportação incluirá os resultados filtrados.`;
+  }
+
+  async function loadReadings() {
+    $("message").textContent = "Consultando o histórico da API...";
+
+    try {
+      const response = await fetch("/api/leituras", { cache: "no-store" });
+
+      if (!response.ok) {
+        throw new Error("A API não conseguiu retornar o histórico.");
+      }
+
+      const data = await response.json();
+
+      if (!Array.isArray(data)) {
+        throw new Error("O histórico retornado não é uma lista.");
+      }
+
+      allReadings = data.map(normalize).filter(item =>
+        Number.isFinite(item.temperature) &&
+        Number.isFinite(item.humidity)
+      );
+
+      populateDevices();
+      $("lastUpdate").textContent = new Date().toLocaleTimeString("pt-BR");
+      $("apiStatus").textContent = "● API conectada";
+      $("apiStatus").style.color = "#16a879";
+
+      applyFilters();
+
+    } catch (error) {
+      $("apiStatus").textContent = "● API indisponível";
+      $("apiStatus").style.color = "#dc4545";
+      $("message").textContent =
+        error.message + " Confira se o backend está em execução.";
+      console.error("Erro ao carregar relatório:", error);
+    }
+  }
+
+  function exportCsv() {
+    if (!reportReadings.length) {
+      $("message").textContent = "Não há registros para exportar. Ajuste os filtros.";
+      return;
+    }
+
+    // BOM para facilitar a abertura do CSV com acentos no Excel.
+    const rows = [
+      ["Data e horário", "Dispositivo", "Temperatura (°C)", "Umidade (%)"],
+      ...[...reportReadings]
+        .sort((a, b) => (getDate(b)?.getTime() ?? 0) - (getDate(a)?.getTime() ?? 0))
+        .map(item => [
+          formatDate(item.timestamp),
+          item.deviceId,
+          item.temperature,
+          item.humidity
+        ])
+    ];
+
+    const csv = "\uFEFF" + rows.map(row =>
+      row.map(value =>
+        '"' + String(value ?? "").replace(/"/g, '""') + '"'
+      ).join(";")
+    ).join("\r\n");
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "relatorio-iot.csv";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+
+    $("message").textContent = "Arquivo CSV gerado com os registros filtrados.";
+  }
+
+  $("applyFilters").addEventListener("click", applyFilters);
+
+  $("clearFilters").addEventListener("click", () => {
+    $("startDate").value = "";
+    $("endDate").value = "";
+    $("deviceFilter").value = "all";
+    applyFilters();
+  });
+
+  $("exportCsv").addEventListener("click", exportCsv);
+  $("refresh").addEventListener("click", loadReadings);
+
+  loadReadings();
+</script>
+</body>
+</html>

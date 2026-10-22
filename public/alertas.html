@@ -1,0 +1,668 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alertas | Plataforma IoT Integrada</title>
+
+  <style>
+    :root {
+      --navy: #102744;
+      --teal: #079f91;
+      --blue: #2878f5;
+      --bg: #f3f7fc;
+      --text: #132b4c;
+      --muted: #637895;
+      --border: #e5edf6;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .app { min-height: 100vh; display: flex; }
+
+    .sidebar {
+      width: 235px;
+      flex-shrink: 0;
+      padding: 24px 12px;
+      display: flex;
+      flex-direction: column;
+      color: white;
+      background: linear-gradient(180deg, #102744, #142f4c);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 10px 32px;
+      font-size: 16px;
+      font-weight: 750;
+      line-height: 1.4;
+    }
+
+    .brand-icon {
+      width: 43px;
+      height: 43px;
+      display: grid;
+      place-items: center;
+      background: #087f78;
+      border-radius: 12px;
+      font-size: 24px;
+    }
+
+    .nav-label {
+      padding: 0 13px;
+      margin-bottom: 12px;
+      color: #91a9c3;
+      font-size: 11px;
+      letter-spacing: 1px;
+    }
+
+    nav { display: grid; gap: 7px; }
+
+    nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px;
+      border-radius: 10px;
+      color: #d5e2f1;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    nav a:hover, nav a.active {
+      background: #164d68;
+      color: white;
+    }
+
+    .nav-icon { width: 22px; text-align: center; font-size: 18px; }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      padding: 15px;
+      border: 1px solid #294863;
+      border-radius: 12px;
+      background: #1b3a58;
+      font-size: 13px;
+    }
+
+    .sidebar-bottom p {
+      color: #c0d1e4;
+      font-size: 12px;
+      line-height: 1.5;
+      margin-bottom: 0;
+    }
+
+    .main { flex: 1; min-width: 0; padding: 28px; }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 24px;
+    }
+
+    h1 { margin: 0 0 7px; font-size: 29px; }
+    .muted { color: var(--muted); font-size: 13px; }
+
+    .panel {
+      min-width: 0;
+      margin-bottom: 18px;
+      padding: 22px;
+      background: white;
+      border: 1px solid #eaf0f7;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px #18375a08;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .metric-label { color: var(--muted); font-size: 13px; }
+
+    .metric-value {
+      margin-top: 12px;
+      font-size: 28px;
+      font-weight: 750;
+    }
+
+    .red { color: #d9485f; }
+    .orange { color: #c66b22; }
+    .green { color: #07865d; }
+
+    .section-title { margin: 0; font-size: 18px; }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    input, select, button {
+      padding: 11px 12px;
+      border: 1px solid #dce6f1;
+      border-radius: 9px;
+      font: inherit;
+    }
+
+    input, select {
+      background: white;
+      color: var(--text);
+    }
+
+    input { flex: 1; min-width: 180px; }
+
+    button {
+      background: var(--navy);
+      border-color: var(--navy);
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover { background: #204564; }
+
+    .rule-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 15px;
+      margin-top: 18px;
+    }
+
+    .rule-card {
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fbfdff;
+    }
+
+    .rule-card h3 { margin: 0 0 8px; font-size: 15px; }
+
+    .rule-card p {
+      margin: 0 0 13px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .rule-inputs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .rule-inputs label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .rule-inputs input {
+      width: 75px;
+      min-width: 0;
+      flex: initial;
+      padding: 8px;
+    }
+
+    .table-wrap { overflow-x: auto; margin-top: 15px; }
+
+    table {
+      width: 100%;
+      min-width: 600px;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th, td {
+      padding: 13px 11px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    th { background: #eef4fa; color: #3d5676; }
+    th:first-child { border-radius: 8px 0 0 8px; }
+    th:last-child { border-radius: 0 8px 8px 0; }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .badge-danger { background: #ffebee; color: #c62842; }
+    .badge-warning { background: #fff2df; color: #a95c12; }
+    .badge-normal { background: #e1f8ed; color: #07865d; }
+
+    .message {
+      margin-top: 15px;
+      padding: 14px;
+      border-radius: 9px;
+      background: #f1f6fb;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .alert-item {
+      padding: 15px;
+      margin-top: 12px;
+      border: 1px solid var(--border);
+      border-left: 4px solid #d9485f;
+      border-radius: 10px;
+      background: white;
+    }
+
+    .alert-item.warning { border-left-color: #d99132; }
+
+    .alert-item strong { display: block; margin-bottom: 6px; }
+    .alert-item p { margin: 0; font-size: 12px; color: var(--muted); }
+
+    footer {
+      padding: 12px;
+      text-align: center;
+      color: #8494a9;
+      font-size: 11px;
+    }
+
+    @media (max-width: 900px) {
+      .app { display: block; }
+      .sidebar { width: 100%; padding: 15px; }
+      .brand { padding-bottom: 15px; }
+      .nav-label, .sidebar-bottom { display: none; }
+      nav { display: flex; overflow-x: auto; }
+      nav a { white-space: nowrap; }
+      .main { padding: 18px 13px; }
+      .metrics, .rule-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 25px; }
+    }
+  </style>
+</head>
+
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">◈</div>
+      <div>Plataforma<br>IoT Integrada</div>
+    </div>
+
+    <div class="nav-label">MENU PRINCIPAL</div>
+
+    <nav aria-label="Menu principal">
+      <a href="/index.html"><span class="nav-icon">▦</span>Dashboard</a>
+      <a href="/leituras.html"><span class="nav-icon">⌁</span>Leituras</a>
+      <a href="/dispositivos.html"><span class="nav-icon">▣</span>Dispositivos</a>
+      <a href="/alertas.html" class="active"><span class="nav-icon">♧</span>Alertas</a>
+      <a href="/relatorios.html"><span class="nav-icon">▤</span>Relatórios</a>
+      <a href="/configuracoes.html"><span class="nav-icon">⚙</span>Configurações</a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <strong id="apiStatus">● Verificando API</strong>
+      <p>Monitoramento de limites configurados nesta página.</p>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h1>Alertas</h1>
+        <div class="muted">Acompanhamento de condições fora dos limites definidos</div>
+      </div>
+      <div class="muted">Última consulta: <strong id="lastUpdate">--</strong></div>
+    </header>
+
+    <section class="metrics">
+      <article class="panel">
+        <div class="metric-label">Alertas encontrados</div>
+        <div class="metric-value red" id="totalAlerts">--</div>
+      </article>
+      <article class="panel">
+        <div class="metric-label">Temperatura fora do limite</div>
+        <div class="metric-value orange" id="tempAlerts">--</div>
+      </article>
+      <article class="panel">
+        <div class="metric-label">Umidade fora do limite</div>
+        <div class="metric-value orange" id="humidityAlerts">--</div>
+      </article>
+    </section>
+
+    <section class="panel">
+      <h2 class="section-title">Configuração dos limites</h2>
+      <p class="muted">
+        Os limites abaixo são usados nesta página para analisar as leituras carregadas.
+        Eles não são gravados no servidor.
+      </p>
+
+      <div class="rule-grid">
+        <div class="rule-card">
+          <h3>🌡️ Temperatura</h3>
+          <p>Uma leitura gera um alerta quando fica abaixo do mínimo ou acima do máximo.</p>
+          <div class="rule-inputs">
+            <label>Mínima
+              <input id="tempMin" type="number" value="15" step="0.5">
+              °C
+            </label>
+            <label>Máxima
+              <input id="tempMax" type="number" value="30" step="0.5">
+              °C
+            </label>
+          </div>
+        </div>
+
+        <div class="rule-card">
+          <h3>💧 Umidade</h3>
+          <p>Uma leitura gera um alerta quando fica abaixo do mínimo ou acima do máximo.</p>
+          <div class="rule-inputs">
+            <label>Mínima
+              <input id="humidityMin" type="number" value="30" min="0" max="100">
+              %
+            </label>
+            <label>Máxima
+              <input id="humidityMax" type="number" value="70" min="0" max="100">
+              %
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="filters">
+        <button id="applyRules" type="button">Aplicar limites</button>
+        <button id="refresh" type="button">↻ Atualizar leituras</button>
+      </div>
+
+      <div class="message" id="statusMessage" role="status">
+        Consultando a API...
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="section-title">Alertas identificados</h2>
+      <p class="muted">Análise das leituras retornadas pela API, conforme os limites definidos acima.</p>
+
+      <div id="alertList">
+        <div class="message">Aguardando dados...</div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="section-title">Histórico de leituras analisadas</h2>
+      <p class="muted">Cada registro é avaliado de acordo com os limites atuais.</p>
+
+      <div class="filters">
+        <select id="filterStatus" aria-label="Filtrar por situação">
+          <option value="all">Todas as leituras</option>
+          <option value="alert">Somente fora do limite</option>
+          <option value="normal">Somente dentro do limite</option>
+        </select>
+        <input id="search" type="search" placeholder="Buscar dispositivo..." aria-label="Buscar dispositivo">
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Data e horário</th>
+              <th>Dispositivo</th>
+              <th>Temperatura</th>
+              <th>Umidade</th>
+              <th>Análise</th>
+            </tr>
+          </thead>
+          <tbody id="history">
+            <tr><td colspan="5">Carregando leituras...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      Plataforma IoT Integrada · Projeto acadêmico de Internet das Coisas
+    </footer>
+  </main>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  let readings = [];
+
+  function normalize(item) {
+    return {
+      deviceId: String(item.deviceId || item.device_id || "sensor"),
+      temperature: Number(item.temperature),
+      humidity: Number(item.humidity),
+      timestamp: item.timestamp || item.measured_at ||
+        item.measuredAt || item.receivedAt || item.received_at
+    };
+  }
+
+  function formatDate(value) {
+    if (!value) return "Horário indisponível";
+    const date = new Date(value);
+    return Number.isNaN(date.getTime())
+      ? "Horário indisponível"
+      : date.toLocaleString("pt-BR");
+  }
+
+  function getRules() {
+    return {
+      tempMin: Number($("tempMin").value),
+      tempMax: Number($("tempMax").value),
+      humidityMin: Number($("humidityMin").value),
+      humidityMax: Number($("humidityMax").value)
+    };
+  }
+
+  function validateRules() {
+    const r = getRules();
+
+    if (
+      $("tempMin").value === "" || $("tempMax").value === "" ||
+      $("humidityMin").value === "" || $("humidityMax").value === ""
+    ) {
+      return "Preencha todos os limites antes de aplicar.";
+    }
+
+    if (!Object.values(r).every(Number.isFinite)) {
+      return "Informe números válidos para todos os limites.";
+    }
+
+    if (r.tempMin >= r.tempMax) {
+      return "A temperatura mínima precisa ser menor que a máxima.";
+    }
+
+    if (r.humidityMin < 0 || r.humidityMax > 100 ||
+        r.humidityMin >= r.humidityMax) {
+      return "A umidade deve ficar entre 0% e 100%, com o mínimo menor que o máximo.";
+    }
+
+    return null;
+  }
+
+  function analyze(reading, rules) {
+    const reasons = [];
+
+    if (reading.temperature < rules.tempMin) {
+      reasons.push("Temperatura abaixo do mínimo");
+    } else if (reading.temperature > rules.tempMax) {
+      reasons.push("Temperatura acima do máximo");
+    }
+
+    if (reading.humidity < rules.humidityMin) {
+      reasons.push("Umidade abaixo do mínimo");
+    } else if (reading.humidity > rules.humidityMax) {
+      reasons.push("Umidade acima do máximo");
+    }
+
+    return reasons;
+  }
+
+  function render() {
+    const error = validateRules();
+
+    if (error) {
+      $("statusMessage").textContent = error;
+      return;
+    }
+
+    const rules = getRules();
+    const analyzed = readings.map(reading => ({
+      ...reading,
+      reasons: analyze(reading, rules)
+    }));
+
+    const alerts = analyzed.filter(item => item.reasons.length > 0);
+    const tempAlerts = alerts.filter(item =>
+      item.temperature < rules.tempMin || item.temperature > rules.tempMax
+    );
+    const humidityAlerts = alerts.filter(item =>
+      item.humidity < rules.humidityMin || item.humidity > rules.humidityMax
+    );
+
+    $("totalAlerts").textContent = alerts.length;
+    $("tempAlerts").textContent = tempAlerts.length;
+    $("humidityAlerts").textContent = humidityAlerts.length;
+
+    const alertList = $("alertList");
+    alertList.replaceChildren();
+
+    if (!alerts.length) {
+      const message = document.createElement("div");
+      message.className = "message";
+      message.textContent = readings.length
+        ? "Nenhuma leitura carregada ultrapassou os limites configurados."
+        : "Não há leituras disponíveis para analisar.";
+      alertList.appendChild(message);
+    } else {
+      alerts.slice(-10).reverse().forEach(item => {
+        const card = document.createElement("div");
+        card.className = "alert-item";
+
+        const title = document.createElement("strong");
+        title.textContent = item.deviceId + " — " + item.reasons.join("; ");
+
+        const description = document.createElement("p");
+        description.textContent =
+          formatDate(item.timestamp) + " · Temperatura: " +
+          item.temperature.toFixed(1) + " °C · Umidade: " +
+          item.humidity.toFixed(0) + " %";
+
+        card.append(title, description);
+        alertList.appendChild(card);
+      });
+    }
+
+    const term = $("search").value.trim().toLowerCase();
+    const filter = $("filterStatus").value;
+
+    const filtered = analyzed.filter(item => {
+      const matchesDevice = item.deviceId.toLowerCase().includes(term);
+      const matchesStatus =
+        filter === "all" ||
+        (filter === "alert" && item.reasons.length > 0) ||
+        (filter === "normal" && item.reasons.length === 0);
+
+      return matchesDevice && matchesStatus;
+    });
+
+    const tbody = $("history");
+    tbody.replaceChildren();
+
+    if (!filtered.length) {
+      const row = tbody.insertRow();
+      const cell = row.insertCell();
+      cell.colSpan = 5;
+      cell.textContent = "Nenhuma leitura corresponde aos filtros.";
+    } else {
+      filtered.slice(-100).reverse().forEach(item => {
+        const row = tbody.insertRow();
+        const values = [
+          formatDate(item.timestamp),
+          item.deviceId,
+          item.temperature.toFixed(1) + " °C",
+          item.humidity.toFixed(0) + " %"
+        ];
+
+        values.forEach((value, index) => {
+          const cell = row.insertCell();
+          cell.textContent = value;
+        });
+
+        const statusCell = row.insertCell();
+        const badge = document.createElement("span");
+        badge.className = "badge " +
+          (item.reasons.length ? "badge-danger" : "badge-normal");
+        badge.textContent = item.reasons.length ? "Fora do limite" : "Dentro do limite";
+        statusCell.appendChild(badge);
+      });
+    }
+  }
+
+  async function loadReadings() {
+    $("statusMessage").textContent = "Consultando leituras na API...";
+
+    try {
+      const response = await fetch("/api/leituras", { cache: "no-store" });
+
+      if (!response.ok) {
+        throw new Error("A API não conseguiu retornar o histórico.");
+      }
+
+      const data = await response.json();
+
+      if (!Array.isArray(data)) {
+        throw new Error("O histórico retornado não é uma lista.");
+      }
+
+      readings = data.map(normalize).filter(item =>
+        Number.isFinite(item.temperature) &&
+        Number.isFinite(item.humidity)
+      );
+
+      $("lastUpdate").textContent = new Date().toLocaleTimeString("pt-BR");
+      $("apiStatus").textContent = "● API conectada";
+      $("apiStatus").style.color = "#16a879";
+      $("statusMessage").textContent =
+        readings.length + " leituras carregadas. Os alertas são calculados nesta página e não são enviados como notificações.";
+
+      render();
+
+    } catch (error) {
+      $("apiStatus").textContent = "● API indisponível";
+      $("apiStatus").style.color = "#dc4545";
+      $("statusMessage").textContent =
+        error.message + " Verifique se o backend está funcionando.";
+      console.error("Erro ao carregar alertas:", error);
+    }
+  }
+
+  $("applyRules").addEventListener("click", render);
+  $("refresh").addEventListener("click", loadReadings);
+  $("filterStatus").addEventListener("change", render);
+  $("search").addEventListener("input", render);
+
+  loadReadings();
+</script>
+</body>
+</html>
