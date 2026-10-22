@@ -112,11 +112,40 @@
     }
 
     .sidebar-bottom {
-      margin-top: auto;
       background: #1b3a58;
       border: 1px solid #294863;
       border-radius: 14px;
       padding: 16px;
+    }
+
+    .sidebar-logout {
+      margin-top: auto;
+      padding: 16px 12px 20px;
+    }
+
+    .sidebar-logout .logout-button {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 10px;
+      background: transparent;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .sidebar-logout .logout-button:hover {
+      background: rgba(255, 255, 255, 0.10);
+    }
+
+    .sidebar-logout .logout-button:disabled {
+      opacity: 0.6;
+      cursor: wait;
     }
 
     .online {
@@ -195,6 +224,27 @@
       color: var(--text);
       padding: 12px;
       min-width: 145px;
+    }
+
+    .logout-button {
+      border: 1px solid #f0d4d4;
+      background: #ffffff;
+      color: #b42318;
+      border-radius: 10px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .logout-button:hover {
+      background: #fff1f0;
+      border-color: #e9aaaa;
+    }
+
+    .logout-button:disabled {
+      opacity: 0.6;
+      cursor: wait;
     }
 
     .connection {
@@ -596,6 +646,17 @@
         <span id="sideStatus">Verificando sistema</span>
       </div>
       <p id="sideDescription">Consultando a API...</p>
+    </div>
+
+    <div class="sidebar-logout">
+      <button
+        class="logout-button"
+        id="btnSair"
+        type="button"
+      >
+        <span aria-hidden="true">⇥</span>
+        <span>Sair</span>
+      </button>
     </div>
   </aside>
 
@@ -1096,8 +1157,47 @@
     link.classList.toggle("active", destino === paginaAtual);
   });
 
+  // SAIR DA PLATAFORMA
+  const botaoSair = document.getElementById("btnSair");
+
+  if (botaoSair) {
+    botaoSair.addEventListener("click", async () => {
+      const confirmar = window.confirm(
+        "Deseja realmente sair da Plataforma IoT Integrada?"
+      );
+
+      if (!confirmar) return;
+
+      botaoSair.disabled = true;
+      botaoSair.textContent = "Saindo...";
+
+      try {
+        const resposta = await fetch("/api/auth/logout", {
+          method: "POST",
+          credentials: "same-origin"
+        });
+
+        if (!resposta.ok) {
+          throw new Error("Não foi possível encerrar a sessão.");
+        }
+
+        window.location.replace("/login.html");
+      } catch (erro) {
+        console.error("Erro ao sair da plataforma:", erro);
+
+        window.alert(
+          "Não foi possível sair. Verifique a conexão e tente novamente."
+        );
+
+        botaoSair.disabled = false;
+        botaoSair.textContent = "Sair";
+      }
+    });
+  }
+
   atualizarPainel();
   setInterval(atualizarPainel, 5000);
+  
 </script>
 </body>
 </html>
